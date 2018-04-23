@@ -12,6 +12,9 @@ namespace RefitXFSample.Services
 
         public ApiService(string apiBaseAddress)
         {
+
+            // Create new HttpClient with the priprity which is specified
+
             createClient = messageHandler =>
             {
                 var client = new HttpClient(messageHandler)
@@ -28,8 +31,7 @@ namespace RefitXFSample.Services
         {
             get
             {
-                return new Lazy<T>(() => createClient( new RateLimitedHttpMessageHandler(new NativeMessageHandler(),
-                    Priority.Background))).Value;
+                return new Lazy<T>(() => createClient( new RateLimitedHttpMessageHandler(new NativeMessageHandler(),Priority.Background))).Value;
             }
         }
 
@@ -51,6 +53,8 @@ namespace RefitXFSample.Services
             }
         }
 
+
+        // Funtion implementation of the interface
         public T GetApi(Priority priority)
         {
             switch (priority)

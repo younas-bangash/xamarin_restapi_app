@@ -72,6 +72,24 @@ namespace RefitXFSample.Services
         }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         protected async Task<TData> RemoteRequestAsync<TData>(Task<TData> task) where TData : HttpResponseMessage, new()
         {
             TData data = new TData();
@@ -100,27 +118,19 @@ namespace RefitXFSample.Services
             }
 
             data = await Policy
-            .Handle<WebException>()
-            .Or<ApiException>()
-            .Or<TaskCanceledException>()
-            .WaitAndRetryAsync
-            (
-                retryCount: 1,
-                sleepDurationProvider: retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))
-            )
-            .ExecuteAsync(async () =>
-            {
-                var result = await task;
-
-                if (result.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    //Logout the user 
-                }
+                .Handle<WebException>()
+                .Or<ApiException>()
+                .Or<TaskCanceledException>()
+                .WaitAndRetryAsync(retryCount: 1,sleepDurationProvider: retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)))
+                .ExecuteAsync(async () =>{
+                    var result = await task;
+                    if (result.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        //Logout the user 
+                    }
                 runningTasks.Remove(task.Id);
-
                 return result;
             });
-
             return data;
         }
     }
