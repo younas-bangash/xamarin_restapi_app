@@ -13,7 +13,7 @@ namespace RefitXFSample.ViewModels
 
         public IApiManager ApiManager;
 
-        IApiService<IMakeUpApi> makeUpApi = new ApiService<IMakeUpApi>(Config.ApiUrl);
+        IApiService<IClientApiServices> makeUpApi = new ApiService<IClientApiServices>(Config.ApiUrl);
 
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -43,7 +43,7 @@ namespace RefitXFSample.ViewModels
                 IsBusy = false;
                 UserDialogs.Instance.HideLoading();
                 Debug.WriteLine(e.ToString());
-                await App.Current.MainPage.DisplayAlert("Eror", "Check your internet connection", "Ok");
+               // await App.Current.MainPage.DisplayAlert("Eror", "Check your internet connection", "Ok");
 
             }
             finally

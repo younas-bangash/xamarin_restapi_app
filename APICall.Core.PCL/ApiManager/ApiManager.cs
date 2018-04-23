@@ -19,7 +19,7 @@ namespace RefitXFSample.Services
         IUserDialogs _userDialogs = UserDialogs.Instance;
         IConnectivity _connectivity = CrossConnectivity.Current;
 
-        IApiService<IMakeUpApi> makeUpApi;
+        IApiService<IClientApiServices> makeUpApi;
 
 
         public bool IsConnected { get; set; }
@@ -30,9 +30,10 @@ namespace RefitXFSample.Services
         // CancellationTokenSource : token for cancellation of asynchronous or long-running synchronous operations 
 
         Dictionary<int, CancellationTokenSource> runningTasks = new Dictionary<int, CancellationTokenSource>();
-        Dictionary<string, Task<HttpResponseMessage>> taskContainer = new Dictionary<string, Task<HttpResponseMessage>>();
 
-        public ApiManager(IApiService<IMakeUpApi> _makeUpApi)
+//        Dictionary<string, Task<HttpResponseMessage>> taskContainer = new Dictionary<string, Task<HttpResponseMessage>>();
+
+        public ApiManager(IApiService<IClientApiServices> _makeUpApi)
         {
             makeUpApi = _makeUpApi;
             IsConnected = _connectivity.IsConnected;
@@ -73,23 +74,16 @@ namespace RefitXFSample.Services
 
 
 
+        public Task<HttpResponseMessage> makeUp(string token)
+        {
+            return null;
+        }
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+        // Generic arguments class to pass to event handlers that need to receive data.
         protected async Task<TData> RemoteRequestAsync<TData>(Task<TData> task) where TData : HttpResponseMessage, new()
         {
             TData data = new TData();
@@ -117,6 +111,7 @@ namespace RefitXFSample.Services
                 return data;
             }
 
+            // Handle web exceptions and retry if there is any issuse
             data = await Policy
                 .Handle<WebException>()
                 .Or<ApiException>()
@@ -124,6 +119,8 @@ namespace RefitXFSample.Services
                 .WaitAndRetryAsync(retryCount: 1,sleepDurationProvider: retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)))
                 .ExecuteAsync(async () =>{
                     var result = await task;
+
+                    // Token expiration  or illegeal access we can handle here
                     if (result.StatusCode == HttpStatusCode.Unauthorized)
                     {
                         //Logout the user 
@@ -133,5 +130,6 @@ namespace RefitXFSample.Services
             });
             return data;
         }
+
     }
 }

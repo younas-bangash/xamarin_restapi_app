@@ -18,7 +18,6 @@ namespace RefitXFSample
         [Get("/api/v1/products.json?brand={brand}")]
         Task<HttpResponseMessage> GetMakeUps(string brand);
 
-
         [Post("/api/v1/addMakeUp")]
         Task<MakeUp> CreateMakeUp([Body] MakeUp makeUp, [Header("Authorization")] string token);
     }

@@ -1,10 +1,12 @@
-﻿using System;
+﻿using APICall.Core.PCL.ModelClasses;
+using Newtonsoft.Json;
+using RefitXFSample.Services;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Newtonsoft.Json;
-using System.Collections.Generic;
-using APICall.Core.PCL.ModelClasses;
+
 
 namespace RefitXFSample.ViewModels
 {
@@ -16,7 +18,7 @@ namespace RefitXFSample.ViewModels
 
         public MainPageViewModel() 
         {
-            GetDataCommand= new Command(async()=>await RunSafe(GetData()));
+            GetDataCommand= new Command(async()=> await RunSafe(GetData()));
         }
 
         async Task GetData(){
